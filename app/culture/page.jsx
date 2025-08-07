@@ -37,149 +37,149 @@ export default function CulturePage() {
   const galleryImages = [
     {
       id: 1,
-      src: "/culture/1.jpg",
+      src: "/culture/1.JPG",
     },
     {
       id: 2,
-      src: "/culture/2.jpg",
+      src: "/culture/2.JPG",
 
     },
     {
       id: 3,
-      src: "/culture/3.jpg",
+      src: "/culture/3.JPG",
 
     },
     {
       id: 4,
-      src: "/culture/4.jpg",
+      src: "/culture/4.JPG",
 
     },
     {
       id: 5,
-      src: "/culture/5.jpg",
+      src: "/culture/5.JPG",
 
     },
     {
       id: 6,
-      src: "/culture/6.jpg",
+      src: "/culture/6.JPG",
 
     },
     {
       id: 7,
-      src: "/culture/7.jpg",
+      src: "/culture/7.JPG",
    
     },
     {
       id: 8,
-      src: "/culture/8.jpg",
+      src: "/culture/8.JPG",
 
     },
     {
       id: 9,
-      src: "/culture/14.jpg",
+      src: "/culture/14.JPG",
 
     },
     {
       id: 10,
-      src: "/culture/9.jpg",
+      src: "/culture/9.JPG",
 
     },
     {
       id: 11,
-      src: "/culture/12.jpg",
+      src: "/culture/12.JPG",
 
     },
     {
       id: 12,
-      src: "/culture/10.jpg",
+      src: "/culture/10.JPG",
 
     },
     {
       id: 13,
-      src: "/culture/15.jpg",
+      src: "/culture/15.JPG",
 
     },
     {
       id: 14,
-      src: "/culture/13.jpg",
+      src: "/culture/13.JPG",
 
     },
     {
       id: 15,
-      src: "/culture/11.jpg",
+      src: "/culture/11.JPG",
 
     },
     {
       id: 16,
-      src: "/culture/16.jpg",
+      src: "/culture/16.JPG",
     },
     {
       id: 17,
-      src: "/culture/17.jpg",
+      src: "/culture/17.JPG",
     },
     {
       id: 18,
-      src: "/culture/18.jpg",
+      src: "/culture/18.JPG",
     },
     {
       id: 19,
-      src: "/culture/19.jpg"
+        src: "/culture/19.JPG"
         },
     {
       id: 20,
-      src: "/culture/20.jpg",
+      src: "/culture/20.JPG",
     },
     {
       id: 21,
-      src: "/culture/21.jpg",
+      src: "/culture/21.JPG",
     },
     {
       id: 22,
-      src: "/culture/22.jpg",
+      src: "/culture/22.JPG",
     },
     {
       id: 23,
-      src: "/culture/23.jpg",
+      src: "/culture/23.JPG",
     },
     {
       id: 24,
-      src: "/culture/24.jpg",
+      src: "/culture/24.JPG",
     },
     {
       id: 25,
-      src: "/culture/25.jpg",
+      src: "/culture/25.JPG",
     },
     {
       id: 26,
-      src: "/culture/26.jpg",
+      src: "/culture/26.JPG",
     },
     {
       id: 27,
-      src: "/culture/27.jpg",
+      src: "/culture/27.JPG",
     },
     {
       id: 28,
-      src: "/culture/28.jpg",
+      src: "/culture/28.JPG",
     },
     {
       id: 29,
-      src: "/culture/29.jpg",
+      src: "/culture/29.JPG",
     },
     {
       id: 30,
-      src: "/culture/30.jpg",
+      src: "/culture/30.JPG",
     },
     {
       id: 31,
-      src: "/culture/31.jpg",
+      src: "/culture/31.JPG",
     },
     {
       id: 32,
-      src: "/culture/32.jpg",
+      src: "/culture/32.JPG",
     },
     {
       id: 33,
-      src: "/culture/33.jpg",
+      src: "/culture/33.JPG",
     },
     {
       id: 34,
