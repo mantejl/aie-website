@@ -171,15 +171,15 @@ export default function CulturePage() {
     },
     {
       id: 31,
-      src: "/culture/31.JPG",
+      src: "/culture/31.jpg",
     },
     {
       id: 32,
-      src: "/culture/32.JPG",
+      src: "/culture/32.jpg",
     },
     {
       id: 33,
-      src: "/culture/33.JPG",
+      src: "/culture/33.jpg",
     },
     {
       id: 34,
