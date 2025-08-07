@@ -30,17 +30,17 @@ export default function ProjectsPage() {
       </div>
       </> ),
       images: [
-        "/work/aiehealth/1.jpg",
+        "/work/aiehealth/1.JPG",
         "/work/aiehealth/2.jpg",
         "/work/aiehealth/3.jpg",
         "/work/aiehealth/4.jpg",
-        "/work/aiehealth/5.jpg",
-        "/work/aiehealth/6.jpg",
-        "/work/aiehealth/7.jpg",
+        "/work/aiehealth/5.JPG",
+        "/work/aiehealth/6.JPG",
+        "/work/aiehealth/7.JPG",
         "/work/aiehealth/8.jpg",
-        "/work/aiehealth/9.jpg",
+        "/work/aiehealth/9.JPG",
         "/work/aiehealth/10.jpg",
-        "/work/aiehealth/11.jpg",
+        "/work/aiehealth/11.JPG",
       ],
       bgColor: "bg-purple-50",
     },
@@ -60,9 +60,9 @@ export default function ProjectsPage() {
         </>
       ),
       images: [
-        "/work/workshop/im1.jpg",
-        "/work/workshop/im2.jpg",
-        "/work/workshop/im3.jpg",
+        "/work/workshop/im1.JPG",
+        "/work/workshop/im2.JPG",
+        "/work/workshop/im3.JPG",
       ],
       bgColor: "bg-purple-50",
     },
@@ -85,8 +85,8 @@ export default function ProjectsPage() {
         "We presented at the AI Ethics Reading Group, a forum that gathers community members to explore the implications of artificial intelligence. We also led three presentations as part of an adult workshop series hosted by So-LA Robotics, focusing on the fundamentals of ethical AI, real-world case studies, and practical frameworks for applying responsible AI practices in everyday projects.",
       images: [
         "/work/community/team.png",
-        "/work/community/after.jpg",
-        "/work/community/presentation3.jpg",
+        "/work/community/after.JPG",
+        "/work/community/presentation3.JPG",
       ],
       bgColor: "bg-purple-50",
     },
@@ -118,7 +118,7 @@ export default function ProjectsPage() {
           </div>
           <div className="flex-1 flex justify-center">
             <Image
-              src="/work/school_p.jpg"
+              src="/work/school_p.JPG"
               alt="Presentation"
               width={500}
               height={500}
