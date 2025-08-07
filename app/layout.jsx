@@ -12,7 +12,15 @@ const inter = Inter({
 export const metadata = {
   title: "Shift AI Ethics",
   description: "Shaping the future of responsible AI",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
+  manifest: '/site.webmanifest',
 }
 
 export default function RootLayout({ children }) {
