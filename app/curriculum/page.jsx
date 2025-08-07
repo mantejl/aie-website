@@ -96,75 +96,132 @@ export default function CurriculumPage() {
         ],
         codeAnswers: [
           {
-            question: "Load and explore the Adult Census dataset",
-            code: `import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+            question: "Working with DataFrames: Sorting, Filtering, and Summarizing",
+            code: `# 1. Sort the data set by sepal width in descending order
+df_sorted = df.sort_values(by='sepal width', ascending=False)
+print("=== Sorted data: ===")
+print(df_sorted.head())
 
-# Load the Adult Census dataset
-df = pd.read_csv('adult.csv')
+# 2. Filter out all versicolor species
+# Assuming the species column is named 'species' and coded as integers
+df_versicolor = df[df['species'] == 1]
+print("=== Versicolors: ===")
+print(df_versicolor.head())
 
-# Basic exploration
-print("Dataset shape:", df.shape)
-print("\\nGender distribution:")
-print(df['sex'].value_counts())
-print("\\nRace distribution:")
-print(df['race'].value_counts())
+# 3. Remove data of petal widths less than 1 cm
+df_bigpetals = df[df['petal width'] >= 1]
+print("=== Petal width >= 1 cm: ===")
+print(df_bigpetals.head())
 
-# Check for missing values
-print("\\nMissing values:")
-print(df.isnull().sum())`,
+# 4. Find the average, max, and minimum petal width value in the dataframe.
+max = df['petal width'].max()
+min = df['petal width'].min()
+avg = df['petal width'].mean()
+print(f"=== Petal size Summary stats ===\nMax: {max}, Min: {min}, Avg: {avg}")`,
           },
           {
-            question: "Calculate statistical parity difference",
-            code: `def statistical_parity_difference(df, protected_attr, target_attr):
-    """Calculate statistical parity difference"""
-    groups = df[protected_attr].unique()
-    
-    positive_rates = {}
-    for group in groups:
-        group_data = df[df[protected_attr] == group]
-        positive_rate = (group_data[target_attr] == '>50K').mean()
-        positive_rates[group] = positive_rate
-        print(f"{group}: {positive_rate:.3f}")
-    
-    # Calculate difference between max and min rates
-    spd = max(positive_rates.values()) - min(positive_rates.values())
-    print(f"\\nStatistical Parity Difference: {spd:.3f}")
-    return spd
+            question: "Visualizing Data with Matplotlib: How Can We Explore Patterns Through Plots?",
+            code: `import matplotlib.pyplot as plt
+import pandas as pd
 
-# Calculate for gender
-print("Statistical Parity by Gender:")
-spd_gender = statistical_parity_difference(df, 'sex', 'income')`,
-          },
-          {
-            question: "Visualize bias patterns across groups",
-            code: `# Create visualization of bias patterns
-fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+# Assuming df is already defined and loaded
 
-# Gender distribution
-axes[0,0].pie(df['sex'].value_counts(), labels=df['sex'].value_counts().index, autopct='%1.1f%%')
-axes[0,0].set_title('Gender Distribution')
+# 1. Scatter plot: Petal Width vs Sepal Width for Setosa (species 0)
+setosa = df[df['species'] == 0]
 
-# Income by gender
-income_gender = pd.crosstab(df['sex'], df['income'], normalize='index')
-income_gender.plot(kind='bar', ax=axes[0,1])
-axes[0,1].set_title('Income Distribution by Gender')
-axes[0,1].set_ylabel('Proportion')
+plt.figure(figsize=(6, 4))
+plt.scatter(setosa['sepal width'], setosa['petal width'])
+plt.title('Setosa: Petal Width vs Sepal Width')
+plt.xlabel('Sepal Width (cm)')
+plt.ylabel('Petal Width (cm)')
+plt.grid(True)
+plt.show()
 
-# Race distribution
-df['race'].value_counts().plot(kind='bar', ax=axes[1,0])
-axes[1,0].set_title('Race Distribution')
-axes[1,0].tick_params(axis='x', rotation=45)
+# 2. Line plot: y = x^2
+function = [x**2 for x in range(100)]
 
-# Income by race
-income_race = pd.crosstab(df['race'], df['income'], normalize='index')
-income_race.plot(kind='bar', ax=axes[1,1])
-axes[1,1].set_title('Income Distribution by Race')
-axes[1,1].tick_params(axis='x', rotation=45)
+plt.figure(figsize=(6, 4))
+plt.plot(function)
+plt.title('Plot of x² from 0 to 99')
+plt.xlabel('x')
+plt.ylabel('x²')
+plt.grid(True)
+plt.show()
+
+# 3. Subplots: Histogram of average petal/sepal dimensions by species
+averages = df.groupby('species').mean(numeric_only=True)
+
+fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+
+axs[0, 0].bar(averages.index, averages['petal width'])
+axs[0, 0].set_title('Avg Petal Width by Species')
+
+axs[0, 1].bar(averages.index, averages['petal length'])
+axs[0, 1].set_title('Avg Petal Length by Species')
+
+axs[1, 0].bar(averages.index, averages['sepal width'])
+axs[1, 0].set_title('Avg Sepal Width by Species')
+
+axs[1, 1].bar(averages.index, averages['sepal length'])
+axs[1, 1].set_title('Avg Sepal Length by Species')
+
+for ax in axs.flat:
+    ax.set_xlabel('Species')
+    ax.set_ylabel('Length (cm)')
 
 plt.tight_layout()
+plt.show()
+
+# 4. Multiple function plots: x³ and |x - 50|
+f1 = [x**3 for x in range(100)]
+f2 = [abs(x - 50) for x in range(100)]
+
+plt.figure(figsize=(6, 4))
+plt.plot(f1, label='x³')
+plt.plot(f2, label='|x - 50|')
+plt.title('Multiple Functions on One Graph')
+plt.xlabel('x')
+plt.ylabel('Value')
+plt.legend()
+plt.grid(True)
+plt.show()`,
+          },
+          {
+            question: "Can You Explore a New Dataset on Your Own?",
+            code: `from sklearn.datasets import load_breast_cancer
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+yourdata = load_breast_cancer()
+df = pd.DataFrame(yourdata.data, columns=yourdata.feature_names)
+
+# Add target labels (0 = malignant, 1 = benign)
+df['target'] = yourdata.target
+
+# Sort by 'mean area' descending
+df_sorted = df.sort_values(by='mean area', ascending=False)
+
+# Filter: only include tumors with 'mean radius' above 20
+df_large_radius = df[df['mean radius'] > 20]
+
+# Visualization 1: Scatter plot of mean radius vs mean texture
+plt.figure(figsize=(6, 4))
+plt.scatter(df['mean radius'], df['mean texture'], alpha=0.5, c=df['target'], cmap='coolwarm')
+plt.title('Mean Radius vs Mean Texture (Colored by Diagnosis)')
+plt.xlabel('Mean Radius')
+plt.ylabel('Mean Texture')
+plt.grid(True)
+plt.colorbar(label='Target (0 = Malignant, 1 = Benign)')
+plt.show()
+
+# Visualization 2: Boxplot of mean area grouped by diagnosis
+plt.figure(figsize=(6, 4))
+df.boxplot(column='mean area', by='target', grid=False)
+plt.title('Mean Area by Diagnosis')
+plt.suptitle('')
+plt.xlabel('Diagnosis (0 = Malignant, 1 = Benign)')
+plt.ylabel('Mean Area')
 plt.show()`,
           },
         ],
@@ -183,112 +240,73 @@ plt.show()`,
         ],
         codeAnswers: [
           {
-            question: "Implement demographic parity metric",
-            code: `def demographic_parity(y_true, y_pred, sensitive_attr):
-    """
-    Calculate demographic parity metric
-    Returns the difference in positive prediction rates between groups
-    """
-    groups = np.unique(sensitive_attr)
-    positive_rates = {}
-    
-    for group in groups:
-        group_mask = sensitive_attr == group
-        group_predictions = y_pred[group_mask]
-        positive_rate = np.mean(group_predictions)
-        positive_rates[group] = positive_rate
-        print(f"Group {group}: Positive rate = {positive_rate:.3f}")
-    
-    # Calculate demographic parity difference
-    dp_diff = max(positive_rates.values()) - min(positive_rates.values())
-    print(f"\\nDemographic Parity Difference: {dp_diff:.3f}")
-    
-    return dp_diff, positive_rates
+            question: "Loading the Iris Dataset",
+            code: `# 📥 Load the Iris dataset
+import pandas as pd
+from sklearn.datasets import load_iris
 
-# Example usage
-dp_diff, rates = demographic_parity(y_true, y_pred, sensitive_feature)`,
+# Load dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# Add the target column (species)
+df['target'] = iris.target
+
+# Preview the data
+df.head()`,
           },
           {
-            question: "Implement equalized odds metric",
-            code: `def equalized_odds(y_true, y_pred, sensitive_attr):
-    """
-    Calculate equalized odds metric
-    Measures difference in TPR and FPR across groups
-    """
-    from sklearn.metrics import confusion_matrix
-    
-    groups = np.unique(sensitive_attr)
-    tpr_diff_max = 0
-    fpr_diff_max = 0
-    
-    tprs = {}
-    fprs = {}
-    
-    for group in groups:
-        group_mask = sensitive_attr == group
-        y_true_group = y_true[group_mask]
-        y_pred_group = y_pred[group_mask]
-        
-        tn, fp, fn, tp = confusion_matrix(y_true_group, y_pred_group).ravel()
-        
-        tpr = tp / (tp + fn) if (tp + fn) > 0 else 0
-        fpr = fp / (fp + tn) if (fp + tn) > 0 else 0
-        
-        tprs[group] = tpr
-        fprs[group] = fpr
-        
-        print(f"Group {group}: TPR = {tpr:.3f}, FPR = {fpr:.3f}")
-    
-    tpr_diff = max(tprs.values()) - min(tprs.values())
-    fpr_diff = max(fprs.values()) - min(fprs.values())
-    
-    print(f"\\nTPR Difference: {tpr_diff:.3f}")
-    print(f"FPR Difference: {fpr_diff:.3f}")
-    
-    return tpr_diff, fpr_diff
+            question: "Can Sepal Length Predict Petal Length? (Linear Regression)",
+            code: `# 📈 Linear Regression: Sepal Length → Petal Length
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
 
-# Example usage
-tpr_diff, fpr_diff = equalized_odds(y_true, y_pred, sensitive_feature)`,
+# Define inputs (X) and outputs (y)
+X = df[['sepal length (cm)']]
+y = df['petal length (cm)']
+
+# Fit the model
+model = LinearRegression()
+model.fit(X, y)
+
+# Predict petal length
+df['predicted_petal_length'] = model.predict(X)
+
+# Plot the regression line
+plt.figure(figsize=(6, 4))
+plt.scatter(X, y, label='Actual', alpha=0.6)
+plt.plot(X, df['predicted_petal_length'], color='red', label='Regression Line')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Petal Length (cm)')
+plt.title('Linear Regression: Sepal Length → Petal Length')
+plt.legend()
+plt.grid(True)
+plt.show()`,
           },
           {
-            question: "Compare fairness-accuracy trade-offs",
-            code: `def fairness_accuracy_tradeoff(X, y, sensitive_attr, thresholds):
-    """
-    Analyze trade-off between fairness and accuracy
-    """
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score
-    
-    results = []
-    
-    for threshold in thresholds:
-        # Train model
-        model = LogisticRegression(random_state=42)
-        model.fit(X, y)
-        
-        # Get prediction probabilities
-        y_prob = model.predict_proba(X)[:, 1]
-        
-        # Apply threshold
-        y_pred = (y_prob >= threshold).astype(int)
-        
-        # Calculate metrics
-        accuracy = accuracy_score(y, y_pred)
-        dp_diff, _ = demographic_parity(y, y_pred, sensitive_attr)
-        
-        results.append({
-            'threshold': threshold,
-            'accuracy': accuracy,
-            'demographic_parity_diff': dp_diff
-        })
-        
-        print(f"Threshold: {threshold:.2f}, Accuracy: {accuracy:.3f}, DP Diff: {dp_diff:.3f}")
-    
-    return results
+            question: "Can We Classify Iris Species Using a Decision Tree?",
+            code: `# 🌳 Decision Tree Classifier and Visualization
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
 
-# Analyze trade-offs
-thresholds = np.arange(0.3, 0.8, 0.05)
-tradeoff_results = fairness_accuracy_tradeoff(X_train, y_train, sensitive_train, thresholds)`,
+# Define features (X) and target (y)
+X = df[iris.feature_names]
+y = df['target']
+
+# Train decision tree
+tree_model = DecisionTreeClassifier(random_state=0, max_depth=3)
+tree_model.fit(X, y)
+
+# Visualize the tree
+plt.figure(figsize=(12, 8))
+plot_tree(
+    tree_model,
+    feature_names=iris.feature_names,
+    class_names=iris.target_names,
+    filled=True
+)
+plt.title("Decision Tree Trained on Iris Dataset")
+plt.show()`,
           },
         ],
       },
@@ -306,168 +324,43 @@ tradeoff_results = fairness_accuracy_tradeoff(X_train, y_train, sensitive_train,
         ],
         codeAnswers: [
           {
-            question: "Implement Laplace mechanism for differential privacy",
-            code: `import numpy as np
-from scipy.stats import laplace
+            question: "How Accurate Is the Model for Each Gender? (Group-wise Evaluation)",
+            code: `from sklearn.metrics import accuracy_score
 
-def laplace_mechanism(true_answer, sensitivity, epsilon):
-    """
-    Add Laplace noise for differential privacy
-    
-    Args:
-        true_answer: The true value to be privatized
-        sensitivity: The sensitivity of the query
-        epsilon: Privacy parameter (smaller = more private)
-    """
-    # Calculate scale parameter
-    scale = sensitivity / epsilon
-    
-    # Generate Laplace noise
-    noise = np.random.laplace(0, scale)
-    
-    # Add noise to true answer
-    private_answer = true_answer + noise
-    
-    return private_answer
+# Filter groups by gender
+group_male = X_test[X_test['gender_encoded'] == 0]
+group_female = X_test[X_test['gender_encoded'] == 1]
 
-# Example: Private count query
-true_count = 1000
-sensitivity = 1  # Adding/removing one person changes count by at most 1
-epsilon = 0.1    # Strong privacy
+# Calculate accuracy for each group
+acc_male = accuracy_score(group_male['actual'], group_male['predicted'])
+acc_female = accuracy_score(group_female['actual'], group_female['predicted'])
 
-private_count = laplace_mechanism(true_count, sensitivity, epsilon)
-print(f"True count: {true_count}")
-print(f"Private count: {private_count:.2f}")
-print(f"Error: {abs(private_count - true_count):.2f}")`,
+# Display results
+print(f"Male Accuracy: {acc_male:.2f}")
+print(f"Female Accuracy: {acc_female:.2f}")`,
           },
           {
-            question: "Compare privacy-utility trade-offs",
-            code: `def privacy_utility_analysis(true_values, sensitivity, epsilons, num_trials=100):
-    """
-    Analyze privacy-utility trade-off for different epsilon values
-    """
-    results = []
-    
-    for epsilon in epsilons:
-        errors = []
-        
-        for _ in range(num_trials):
-            for true_val in true_values:
-                private_val = laplace_mechanism(true_val, sensitivity, epsilon)
-                error = abs(private_val - true_val)
-                errors.append(error)
-        
-        avg_error = np.mean(errors)
-        std_error = np.std(errors)
-        
-        results.append({
-            'epsilon': epsilon,
-            'avg_error': avg_error,
-            'std_error': std_error,
-            'privacy_level': 'High' if epsilon < 0.5 else 'Medium' if epsilon < 2.0 else 'Low'
-        })
-        
-        print(f"ε = {epsilon:.1f}: Avg Error = {avg_error:.2f} ± {std_error:.2f}")
-    
-    return results
+            question: "How Can We Make Accuracy More Fair? (Reweighting with Sample Weights)",
+            code: `from sklearn.utils import compute_sample_weight
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
-# Test different epsilon values
-true_values = [100, 500, 1000, 2000]
-epsilons = [0.1, 0.5, 1.0, 2.0, 5.0]
-analysis_results = privacy_utility_analysis(true_values, 1, epsilons)
+# Calculate sample weights to give equal importance to male and female samples
+weights = compute_sample_weight(class_weight='balanced', y=X_train['gender_encoded'])
 
-# Visualize results
-import matplotlib.pyplot as plt
+# Train logistic regression with sample weights
+model_weighted = LogisticRegression()
+model_weighted.fit(X_train[['experience', 'gender_encoded']], X_train['actual'], sample_weight=weights)
 
-epsilons_plot = [r['epsilon'] for r in analysis_results]
-errors_plot = [r['avg_error'] for r in analysis_results]
+# Predict using the weighted model
+X_test['predicted_weighted'] = model_weighted.predict(X_test[['experience', 'gender_encoded']])
 
-plt.figure(figsize=(10, 6))
-plt.plot(epsilons_plot, errors_plot, 'bo-', linewidth=2, markersize=8)
-plt.xlabel('Epsilon (Privacy Parameter)')
-plt.ylabel('Average Error')
-plt.title('Privacy-Utility Trade-off')
-plt.grid(True, alpha=0.3)
-plt.show()`,
-          },
-          {
-            question: "Simple federated learning simulation",
-            code: `class FederatedLearningSimulation:
-    def __init__(self, num_clients=5):
-        self.num_clients = num_clients
-        self.global_model = None
-        self.client_models = []
-        
-    def initialize_models(self, input_dim):
-        """Initialize global and client models"""
-        from sklearn.linear_model import SGDClassifier
-        
-        # Global model
-        self.global_model = SGDClassifier(random_state=42)
-        
-        # Client models (copies of global model)
-        self.client_models = [
-            SGDClassifier(random_state=42) 
-            for _ in range(self.num_clients)
-        ]
-    
-    def distribute_data(self, X, y):
-        """Distribute data among clients"""
-        n_samples = len(X)
-        samples_per_client = n_samples // self.num_clients
-        
-        client_data = []
-        for i in range(self.num_clients):
-            start_idx = i * samples_per_client
-            end_idx = start_idx + samples_per_client
-            
-            if i == self.num_clients - 1:  # Last client gets remaining data
-                end_idx = n_samples
-                
-            client_data.append((X[start_idx:end_idx], y[start_idx:end_idx]))
-        
-        return client_data
-    
-    def local_training(self, client_data, epochs=5):
-        """Train models locally on each client"""
-        for i, (X_client, y_client) in enumerate(client_data):
-            print(f"Training client {i+1} with {len(X_client)} samples")
-            
-            # Train local model
-            for epoch in range(epochs):
-                self.client_models[i].partial_fit(X_client, y_client, classes=np.unique(y_client))
-    
-    def federated_averaging(self):
-        """Aggregate client models using federated averaging"""
-        # Simple averaging of model coefficients
-        if hasattr(self.client_models[0], 'coef_'):
-            avg_coef = np.mean([model.coef_ for model in self.client_models], axis=0)
-            avg_intercept = np.mean([model.intercept_ for model in self.client_models], axis=0)
-            
-            # Update global model
-            self.global_model.coef_ = avg_coef
-            self.global_model.intercept_ = avg_intercept
-            
-            print("Global model updated with federated averaging")
+# Re-calculate accuracy per group
+group_m = X_test[X_test['gender_encoded'] == 0]
+group_f = X_test[X_test['gender_encoded'] == 1]
 
-# Example usage
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-
-# Generate sample data
-X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, random_state=42)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Initialize federated learning
-fl_sim = FederatedLearningSimulation(num_clients=5)
-fl_sim.initialize_models(X_train.shape[1])
-
-# Distribute data and train
-client_data = fl_sim.distribute_data(X_train, y_train)
-fl_sim.local_training(client_data)
-fl_sim.federated_averaging()
-
-print("Federated learning simulation completed!")`,
+print("Male Accuracy (weighted):", accuracy_score(group_m['actual'], group_m['predicted_weighted']))
+print("Female Accuracy (weighted):", accuracy_score(group_f['actual'], group_f['predicted_weighted']))`,
           },
         ],
       },
@@ -485,261 +378,16 @@ print("Federated learning simulation completed!")`,
         ],
         codeAnswers: [
           {
-            question: "LIME explanations for image classification",
-            code: `# Install required packages
-!pip install lime
-
-import lime
-import lime.lime_image
-from lime.wrappers.scikit_image import SegmentationAlgorithm
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.ensemble import RandomForestClassifier
-from skimage.segmentation import mark_boundaries
-
-def explain_image_prediction(model, image, class_names):
-    """
-    Generate LIME explanation for image classification
-    """
-    # Initialize LIME explainer
-    explainer = lime.lime_image.LimeImageExplainer()
-    
-    # Generate explanation
-    explanation = explainer.explain_instance(
-        image, 
-        model.predict_proba,
-        top_labels=len(class_names),
-        hide_color=0,
-        num_samples=1000
-    )
-    
-    # Get image and mask for top prediction
-    temp, mask = explanation.get_image_and_mask(
-        explanation.top_labels[0], 
-        positive_only=True, 
-        num_features=10, 
-        hide_rest=False
-    )
-    
-    # Visualize results
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    
-    # Original image
-    axes[0].imshow(image)
-    axes[0].set_title('Original Image')
-    axes[0].axis('off')
-    
-    # LIME explanation
-    axes[1].imshow(mark_boundaries(temp, mask))
-    axes[1].set_title('LIME Explanation')
-    axes[1].axis('off')
-    
-    # Mask only
-    axes[2].imshow(mask, cmap='gray')
-    axes[2].set_title('Important Regions')
-    axes[2].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    return explanation
-
-# Example usage (assuming you have a trained image classifier)
-# explanation = explain_image_prediction(model, test_image, ['cat', 'dog'])`,
-          },
-          {
-            question: "SHAP explanations for tabular data",
-            code: `# Install SHAP
-!pip install shap
-
-import shap
-import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-
-def shap_analysis(model, X_train, X_test, feature_names):
-    """
-    Comprehensive SHAP analysis for tabular data
-    """
-    # Initialize SHAP explainer
-    explainer = shap.TreeExplainer(model)
-    
-    # Calculate SHAP values
-    shap_values = explainer.shap_values(X_test)
-    
-    # If binary classification, use positive class
-    if isinstance(shap_values, list):
-        shap_values_plot = shap_values[1]
-    else:
-        shap_values_plot = shap_values
-    
-    # 1. Summary plot (global importance)
-    print("1. Feature Importance Summary:")
-    shap.summary_plot(shap_values_plot, X_test, feature_names=feature_names, show=False)
-    plt.title('SHAP Feature Importance')
-    plt.tight_layout()
-    plt.show()
-    
-    # 2. Waterfall plot for single prediction
-    print("\\n2. Single Prediction Explanation:")
-    shap.waterfall_plot(
-        explainer.expected_value[1] if isinstance(explainer.expected_value, list) else explainer.expected_value,
-        shap_values_plot[0],
-        X_test.iloc[0] if hasattr(X_test, 'iloc') else X_test[0],
-        feature_names=feature_names,
-        show=False
-    )
-    plt.title('SHAP Waterfall Plot - Single Prediction')
-    plt.tight_layout()
-    plt.show()
-    
-    # 3. Force plot for single prediction
-    print("\\n3. Force Plot:")
-    shap.force_plot(
-        explainer.expected_value[1] if isinstance(explainer.expected_value, list) else explainer.expected_value,
-        shap_values_plot[0],
-        X_test.iloc[0] if hasattr(X_test, 'iloc') else X_test[0],
-        feature_names=feature_names,
-        matplotlib=True,
-        show=False
-    )
-    plt.title('SHAP Force Plot')
-    plt.tight_layout()
-    plt.show()
-    
-    # 4. Partial dependence plots
-    print("\\n4. Partial Dependence:")
-    for i, feature in enumerate(feature_names[:3]):  # Top 3 features
-        shap.partial_dependence_plot(
-            feature, model.predict_proba, X_train, ice=False,
-            model_expected_value=True, feature_expected_value=True, show=False
-        )
-        plt.title(f'Partial Dependence: {feature}')
-        plt.tight_layout()
-        plt.show()
-    
-    return shap_values
-
-# Example usage
-from sklearn.datasets import load_breast_cancer
-
-# Load data
-data = load_breast_cancer()
-X, y = data.data, data.target
-feature_names = data.feature_names
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-
-# Generate SHAP explanations
-shap_values = shap_analysis(model, X_train, X_test, feature_names)`,
-          },
-          {
-            question: "Compare local vs global interpretability methods",
-            code: `def interpretability_comparison(model, X_train, X_test, y_test, feature_names):
-    """
-    Compare different interpretability methods
-    """
-    from sklearn.inspection import permutation_importance
-    from sklearn.metrics import accuracy_score
-    
-    print("=== INTERPRETABILITY METHODS COMPARISON ===\\n")
-    
-    # 1. Global Feature Importance (Model-specific)
-    print("1. GLOBAL METHODS:")
-    print("-" * 40)
-    
-    if hasattr(model, 'feature_importances_'):
-        print("Built-in Feature Importance (Random Forest):")
-        importance_df = pd.DataFrame({
-            'feature': feature_names,
-            'importance': model.feature_importances_
-        }).sort_values('importance', ascending=False)
-        
-        print(importance_df.head(10))
-        
-        # Plot
-        plt.figure(figsize=(10, 6))
-        plt.barh(importance_df.head(10)['feature'], importance_df.head(10)['importance'])
-        plt.title('Global Feature Importance (Built-in)')
-        plt.xlabel('Importance')
-        plt.tight_layout()
-        plt.show()
-    
-    # 2. Permutation Importance (Model-agnostic)
-    print("\\nPermutation Importance (Model-agnostic):")
-    perm_importance = permutation_importance(
-        model, X_test, y_test, n_repeats=10, random_state=42
-    )
-    
-    perm_df = pd.DataFrame({
-        'feature': feature_names,
-        'importance': perm_importance.importances_mean,
-        'std': perm_importance.importances_std
-    }).sort_values('importance', ascending=False)
-    
-    print(perm_df.head(10))
-    
-    # Plot
-    plt.figure(figsize=(10, 6))
-    plt.barh(perm_df.head(10)['feature'], perm_df.head(10)['importance'])
-    plt.title('Global Permutation Importance')
-    plt.xlabel('Importance')
-    plt.tight_layout()
-    plt.show()
-    
-    # 3. Local Methods
-    print("\\n2. LOCAL METHODS:")
-    print("-" * 40)
-    
-    # SHAP local explanation
-    import shap
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_test[:5])  # First 5 samples
-    
-    if isinstance(shap_values, list):
-        shap_values_local = shap_values[1]
-    else:
-        shap_values_local = shap_values
-    
-    print("SHAP Local Explanations (first 5 samples):")
-    for i in range(5):
-        print(f"\\nSample {i+1}:")
-        sample_shap = pd.DataFrame({
-            'feature': feature_names,
-            'shap_value': shap_values_local[i]
-        }).sort_values('shap_value', key=abs, ascending=False)
-        print(sample_shap.head(5))
-    
-    # 4. Comparison Summary
-    print("\\n3. METHOD COMPARISON:")
-    print("-" * 40)
-    
-    comparison_data = {
-        'Method': ['Built-in Importance', 'Permutation Importance', 'SHAP Global', 'SHAP Local'],
-        'Scope': ['Global', 'Global', 'Global', 'Local'],
-        'Model Agnostic': ['No', 'Yes', 'No*', 'No*'],
-        'Computational Cost': ['Low', 'Medium', 'Medium', 'High'],
-        'Interpretability': ['Medium', 'High', 'High', 'Very High']
-    }
-    
-    comparison_df = pd.DataFrame(comparison_data)
-    print(comparison_df.to_string(index=False))
-    
-    print("\\n* SHAP has model-agnostic versions (KernelExplainer)")
-    
-    return {
-        'builtin_importance': importance_df if hasattr(model, 'feature_importances_') else None,
-        'permutation_importance': perm_df,
-        'shap_values': shap_values_local
-    }
-
-# Example usage
-results = interpretability_comparison(model, X_train, X_test, y_test, feature_names)`,
+            question: "Solutions Available in Module Video",
+            code: `# In this exercise, the solutions are covered in the module video where Richa goes through them and explains them in detail.
+# 
+# Please refer to the video lecture for comprehensive explanations of the adversarial testing techniques and robustness measures.
+# 
+# The video covers:
+# - Gaussian noise testing
+# - Performance degradation analysis  
+# - Visualization techniques
+# - Best practices for model robustness evaluation`,
           },
         ],
       },
@@ -749,6 +397,23 @@ results = interpretability_comparison(model, X_train, X_test, y_test, feature_na
         description:
           "Apply your learning in a comprehensive capstone project that addresses ethical AI challenges in healthcare allocation, scholarship distribution, or criminal justice reform.",
         colabUrl: "https://colab.research.google.com/drive/your-notebook-5",
+        colabUrls: [
+          {
+            title: "Hospital Bed Allocation",
+            url: "https://colab.research.google.com/drive/1capstone-hospital-allocation",
+            description: "Design and implement a fair hospital bed allocation system"
+          },
+          {
+            title: "Scholarship Distribution", 
+            url: "https://colab.research.google.com/drive/2capstone-scholarship-distribution",
+            description: "Create an equitable scholarship distribution algorithm"
+          },
+          {
+            title: "COMPAS Analysis",
+            url: "https://colab.research.google.com/drive/3capstone-compas-analysis", 
+            description: "Analyze and improve the COMPAS recidivism prediction tool"
+          }
+        ],
         relatedVideos: [4],
         practiceActivities: [
           "Design and implement a fair hospital bed allocation system",
@@ -757,230 +422,993 @@ results = interpretability_comparison(model, X_train, X_test, y_test, feature_na
         ],
         codeAnswers: [
           {
-            question: "Implement a fair allocation system",
-            code: `def fair_allocation_system(applicants, resources, fairness_constraints):
-    """
-    Design a fair allocation system for limited resources
-    """
-    import numpy as np
-    from sklearn.preprocessing import StandardScaler
-    
-    # Normalize applicant scores
+            question: "Hospital Track",
+            code: `# Complete Healthcare Data Science Pipeline with Fairness and Safety Measures
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load your patient dataset
+# df = pd.read_csv('patient_data.csv')
+
+# ========================================
+# 1. EXPLORING THE DATA
+# ========================================
+
+# Inspect missing values and duplicates
+print("=== DATA OVERVIEW ===")
+print(df.info())
+print("\\n=== MISSING VALUES ===")
+print(df.isnull().sum())
+print(f"\\nTotal duplicates: {df.duplicated().sum()}")
+
+# Explore the number of categories within categorical variables
+print("\\n=== CATEGORICAL VARIABLES ANALYSIS ===")
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+for col in categorical_cols:
+    unique_count = df[col].nunique()
+    print(f"{col}: {unique_count} unique categories")
+    if unique_count <= 20:  # Show categories if reasonable number
+        print(f"  Categories: {df[col].value_counts().to_dict()}")
+    print()
+
+# Create visualizations to understand the data
+print("=== DATA VISUALIZATION ===")
+plt.figure(figsize=(15, 10))
+
+# Distribution of numerical variables
+numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+n_num = len(numerical_cols)
+for i, col in enumerate(numerical_cols[:6]):  # Show first 6 numerical columns
+    plt.subplot(2, 3, i+1)
+    plt.hist(df[col].dropna(), bins=30, alpha=0.7)
+    plt.title(f'Distribution of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# Categorical variables visualization
+plt.figure(figsize=(15, 8))
+n_cat = min(len(categorical_cols), 4)  # Show up to 4 categorical variables
+for i, col in enumerate(categorical_cols[:n_cat]):
+    plt.subplot(2, 2, i+1)
+    df[col].value_counts().plot(kind='bar')
+    plt.title(f'Distribution of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap for numerical variables
+if len(numerical_cols) > 1:
+    plt.figure(figsize=(12, 8))
+    correlation_matrix = df[numerical_cols].corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+    plt.title('Correlation Matrix of Numerical Variables')
+    plt.show()
+
+# ========================================
+# 2. CLEANING THE DATA
+# ========================================
+
+print("\\n=== DATA CLEANING ===")
+
+# Drop or fill missing values
+print(f"Before cleaning - Shape: {df.shape}")
+# Option 1: Drop rows with missing values
+# df = df.dropna()
+
+# Option 2: Fill with mean/median for numerical, mode for categorical
+for col in df.columns:
+    if df[col].dtype in ['int64', 'float64']:
+        df[col].fillna(df[col].median(), inplace=True)
+    else:
+        df[col].fillna(df[col].mode()[0] if not df[col].mode().empty else 'Unknown', inplace=True)
+
+print(f"After cleaning - Shape: {df.shape}")
+
+# Normalize or scale numerical columns
+numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+if len(numeric_cols) > 0:
     scaler = StandardScaler()
-    normalized_scores = scaler.fit_transform(applicants[['score', 'need', 'urgency']])
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    print("Numerical columns standardized")
+
+# Encode categorical variables
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+categorical_cols = [col for col in categorical_cols if col != 'Admission_Type']  # Exclude target variable
+
+for col in categorical_cols:
+    unique_count = df[col].nunique()
     
-    # Apply fairness constraints
-    def calculate_fairness_score(applicant, group_representation):
-        base_score = applicant['normalized_score']
-        fairness_bonus = group_representation.get(applicant['group'], 0) * 0.1
-        return base_score + fairness_bonus
+    # Use Label Encoding for ordinal or high cardinality variables
+    if unique_count > 10:
+        print(f"Label encoding {col} ({unique_count} categories)")
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
     
-    # Track group representation
-    group_counts = {}
-    total_allocated = 0
+    # Use One-Hot Encoding for nominal variables with few categories
+    else:
+        print(f"One-hot encoding {col} ({unique_count} categories)")
+        df = pd.get_dummies(df, columns=[col], prefix=col, drop_first=True)
+
+print(f"Final dataset shape: {df.shape}")
+
+# ========================================
+# 3. PATIENT PRIVACY PROTECTION
+# ========================================
+
+print("\\n=== PATIENT PRIVACY PROTECTION ===")
+
+# Remove direct identifiers like name
+if 'Name' in df.columns:
+    df = df.drop(columns=['Name'], errors='ignore')
+    print("Removed Name column")
+
+# Generalize features (e.g., age → age group)
+if 'age' in df.columns:
+    df['age_group'] = pd.cut(df['age'], 
+                            bins=[0, 18, 35, 60, 100], 
+                            labels=['0-18', '19-35', '36-60', '60+'])
+    print("Age generalized to age groups")
+
+# Add noise to sensitive columns
+def add_noise(col, epsilon=0.1):
+    return col + np.random.normal(0, epsilon, size=len(col))
+
+# Example: Add noise to income if it exists
+if 'income' in df.columns:
+    df['income'] = add_noise(df['income'])
+    print("Added noise to income column")
+
+# Prepare features and target
+if 'Admission_Type' in df.columns:
+    X = df.drop(columns=['Admission_Type'])
+    y = df['Admission_Type']
+else:
+    # If target column has different name, adjust accordingly
+    print("Available columns:", df.columns.tolist())
+    target_col = input("Enter the target column name (e.g., 'Admission_Type'): ")
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
+
+# Encode target variable if it's categorical
+if y.dtype == 'object':
+    le_target = LabelEncoder()
+    y = le_target.fit_transform(y)
+
+print(f"Features shape: {X.shape}")
+print(f"Target distribution: {pd.Series(y).value_counts().to_dict()}")
+
+# ========================================
+# 4. MODEL TRAINING
+# ========================================
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+# Train model (Random Forest)
+print("\\n=== TRAINING RANDOM FOREST MODEL ===")
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Evaluate Random Forest
+rf_pred = rf_model.predict(X_test)
+print("Random Forest Performance:")
+print(f"Accuracy: {accuracy_score(y_test, rf_pred):.3f}")
+print("\\nClassification Report:")
+print(classification_report(y_test, rf_pred))
+
+# Train Neural Network
+print("\\n=== TRAINING NEURAL NETWORK MODEL ===")
+nn_model = MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42)
+nn_model.fit(X_train, y_train)
+
+# Evaluate Neural Network  
+nn_pred = nn_model.predict(X_test)
+print("Neural Network Performance:")
+print(f"Accuracy: {accuracy_score(y_test, nn_pred):.3f}")
+print("\\nClassification Report:")
+print(classification_report(y_test, nn_pred))
+
+# Choose the better performing model for further analysis
+if accuracy_score(y_test, rf_pred) >= accuracy_score(y_test, nn_pred):
+    best_model = rf_model
+    best_pred = rf_pred
+    model_name = "Random Forest"
+    print(f"\\n{model_name} selected as the best model")
+else:
+    best_model = nn_model
+    best_pred = nn_pred
+    model_name = "Neural Network"
+    print(f"\\n{model_name} selected as the best model")
+
+# ========================================
+# 5. FAIRNESS METRICS
+# ========================================
+
+print("\\n=== FAIRNESS EVALUATION ===")
+
+# Look for financial/insurance-related columns
+financial_cols = [col for col in X.columns if any(term in col.lower() 
+                 for term in ['insurance', 'billing', 'income', 'payment', 'financial', 'cost'])]
+
+print(f"Found potential financial columns: {financial_cols}")
+
+# Example pseudocode implementation:
+# Split by financial groups and evaluate fairness
+if financial_cols:
+    financial_col = financial_cols[0]  # Use first financial column
     
-    # Sort by fairness-adjusted scores
-    applicants['fairness_score'] = applicants.apply(
-        lambda x: calculate_fairness_score(x, group_counts), axis=1
-    )
-    applicants_sorted = applicants.sort_values('fairness_score', ascending=False)
+    print(f"\\nEvaluating fairness across {financial_col} groups:")
     
-    # Allocate resources
-    allocated = []
-    for _, applicant in applicants_sorted.iterrows():
-        if total_allocated < resources:
-            allocated.append(applicant)
-            total_allocated += 1
+    for group in X_test[financial_col].unique():
+        idx = X_test[financial_col] == group
+        if idx.sum() > 0:  # Only process if group has samples
+            group_accuracy = accuracy_score(y_test[idx], best_pred[idx])
+            group_precision = precision_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
+            group_recall = recall_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
             
-            # Update group representation
-            group = applicant['group']
-            group_counts[group] = group_counts.get(group, 0) + 1
+            print(f"Group {group}:")
+            print(f"  Accuracy: {group_accuracy:.3f}")
+            print(f"  Precision: {group_precision:.3f}")
+            print(f"  Recall: {group_recall:.3f}")
+            print(f"  Sample size: {idx.sum()}")
+            print()
+
+# Alternative: Check for gender-based fairness if gender column exists
+gender_cols = [col for col in X.columns if 'gender' in col.lower()]
+if gender_cols:
+    gender_col = gender_cols[0]
+    print(f"\\nEvaluating fairness across gender groups ({gender_col}):")
     
-    return allocated, group_counts
+    for group in X_test[gender_col].unique():
+        idx = X_test[gender_col] == group
+        if idx.sum() > 0:
+            group_accuracy = accuracy_score(y_test[idx], best_pred[idx])
+            group_precision = precision_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
+            group_recall = recall_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
+            
+            print(f"Gender {group}:")
+            print(f"  Accuracy: {group_accuracy:.3f}")
+            print(f"  Precision: {group_precision:.3f}")
+            print(f"  Recall: {group_recall:.3f}")
+            print(f"  Sample size: {idx.sum()}")
+            print()
 
-# Example usage
-applicants_data = pd.DataFrame({
-    'id': range(100),
-    'score': np.random.normal(70, 15, 100),
-    'need': np.random.uniform(0, 10, 100),
-    'urgency': np.random.uniform(0, 10, 100),
-    'group': np.random.choice(['A', 'B', 'C'], 100)
-})
+# ========================================
+# 6. SAFETY MEASUREMENTS
+# ========================================
 
-fair_allocations, group_stats = fair_allocation_system(
-    applicants_data, 
-    resources=50, 
-    fairness_constraints={'A': 0.3, 'B': 0.3, 'C': 0.4}
+print("\\n=== SAFETY AND ROBUSTNESS TESTING ===")
+
+# Add noise to test data and compare performance
+def add_random_noise(X, epsilon=0.05):
+    """Add random noise to numerical features"""
+    X_noisy = X.copy()
+    numerical_features = X.select_dtypes(include=[np.number]).columns
+    
+    for col in numerical_features:
+        noise = np.random.normal(0, epsilon, size=X[col].shape)
+        X_noisy[col] = X[col] + noise
+    
+    return X_noisy
+
+# Test model robustness with noisy data
+X_test_noisy = add_random_noise(X_test, epsilon=0.05)
+y_pred_noisy = best_model.predict(X_test_noisy)
+
+print("Performance on clean test data:")
+print(f"Accuracy: {accuracy_score(y_test, best_pred):.3f}")
+
+print("\\nPerformance on noisy test data:")
+print(f"Accuracy: {accuracy_score(y_test, y_pred_noisy):.3f}")
+
+print(f"\\nRobustness score (difference): {abs(accuracy_score(y_test, best_pred) - accuracy_score(y_test, y_pred_noisy)):.3f}")
+
+# Test with different noise levels
+print("\\n=== ROBUSTNESS ACROSS NOISE LEVELS ===")
+noise_levels = [0.01, 0.05, 0.1, 0.2]
+robustness_scores = []
+
+for epsilon in noise_levels:
+    X_test_noisy = add_random_noise(X_test, epsilon=epsilon)
+    y_pred_noisy = best_model.predict(X_test_noisy)
+    noisy_accuracy = accuracy_score(y_test, y_pred_noisy)
+    robustness_scores.append(noisy_accuracy)
+    print(f"Noise level {epsilon}: Accuracy = {noisy_accuracy:.3f}")
+
+# Visualize robustness
+plt.figure(figsize=(10, 6))
+original_accuracy = accuracy_score(y_test, best_pred)
+plt.plot([0] + noise_levels, [original_accuracy] + robustness_scores, 'b-o')
+plt.xlabel('Noise Level (Epsilon)')
+plt.ylabel('Accuracy')
+plt.title('Model Robustness Across Noise Levels')
+plt.grid(True)
+plt.show()
+
+# Feature importance analysis
+if hasattr(best_model, 'feature_importances_'):
+    feature_importance = pd.DataFrame({
+        'feature': X.columns,
+        'importance': best_model.feature_importances_
+    }).sort_values('importance', ascending=False)
+    
+    print("\\n=== TOP 10 MOST IMPORTANT FEATURES ===")
+    print(feature_importance.head(10))
+    
+    # Plot feature importance
+    plt.figure(figsize=(12, 8))
+    top_features = feature_importance.head(15)
+    plt.barh(top_features['feature'], top_features['importance'])
+    plt.xlabel('Feature Importance')
+    plt.title('Top 15 Most Important Features')
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+print("✓ Model trained and evaluated")
+print("✓ Fairness metrics computed")
+print("✓ Safety and robustness testing completed")`,
+          },
+          {
+            question: "Education Track",
+            code: `# Complete Data Science Pipeline with Fairness and Safety Measures
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load your education dataset
+# df = pd.read_csv('education_data.csv')
+
+# ========================================
+# 1. EXPLORING THE DATA
+# ========================================
+
+# Inspect missing values and duplicates
+print("=== DATA OVERVIEW ===")
+print(df.info())
+print("\\n=== MISSING VALUES ===")
+print(df.isnull().sum())
+print(f"\\nTotal duplicates: {df.duplicated().sum()}")
+
+# Explore categorical variables
+print("\\n=== CATEGORICAL VARIABLES ANALYSIS ===")
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+for col in categorical_cols:
+    unique_count = df[col].nunique()
+    print(f"{col}: {unique_count} unique categories")
+    if unique_count <= 20:
+        print(f"  Categories: {df[col].value_counts().to_dict()}")
+    print()
+
+# Create visualizations
+print("=== DATA VISUALIZATION ===")
+plt.figure(figsize=(15, 10))
+
+# Distribution of numerical variables
+numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+n_num = len(numerical_cols)
+for i, col in enumerate(numerical_cols[:6]):
+    plt.subplot(2, 3, i+1)
+    plt.hist(df[col].dropna(), bins=30, alpha=0.7)
+    plt.title(f'Distribution of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# Categorical variables visualization
+plt.figure(figsize=(15, 8))
+n_cat = min(len(categorical_cols), 4)
+for i, col in enumerate(categorical_cols[:n_cat]):
+    plt.subplot(2, 2, i+1)
+    df[col].value_counts().plot(kind='bar')
+    plt.title(f'Distribution of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap
+if len(numerical_cols) > 1:
+    plt.figure(figsize=(12, 8))
+    correlation_matrix = df[numerical_cols].corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+    plt.title('Correlation Matrix of Numerical Variables')
+    plt.show()
+
+# ========================================
+# 2. CLEANING THE DATA
+# ========================================
+
+print("\\n=== DATA CLEANING ===")
+
+# Fill missing values
+print(f"Before cleaning - Shape: {df.shape}")
+for col in df.columns:
+    if df[col].dtype in ['int64', 'float64']:
+        df[col].fillna(df[col].median(), inplace=True)
+    else:
+        df[col].fillna(df[col].mode()[0] if not df[col].mode().empty else 'Unknown', inplace=True)
+
+print(f"After cleaning - Shape: {df.shape}")
+
+# Normalize numerical columns
+numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+if len(numeric_cols) > 0:
+    scaler = StandardScaler()
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    print("Numerical columns standardized")
+
+# Encode categorical variables
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+categorical_cols = [col for col in categorical_cols if col != 'Scholarship_Awarded']  # Exclude target
+
+for col in categorical_cols:
+    unique_count = df[col].nunique()
+    
+    if unique_count > 10:
+        print(f"Label encoding {col} ({unique_count} categories)")
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
+    else:
+        print(f"One-hot encoding {col} ({unique_count} categories)")
+        df = pd.get_dummies(df, columns=[col], prefix=col, drop_first=True)
+
+print(f"Final dataset shape: {df.shape}")
+
+# ========================================
+# 3. PRIVACY PROTECTION
+# ========================================
+
+print("\\n=== PRIVACY PROTECTION ===")
+
+# Remove direct identifiers
+if 'Student_Name' in df.columns:
+    df = df.drop(columns=['Student_Name'], errors='ignore')
+    print("Removed Student_Name column")
+
+# Generalize features
+if 'age' in df.columns:
+    df['age_group'] = pd.cut(df['age'], 
+                            bins=[0, 18, 25, 35, 100], 
+                            labels=['0-18', '19-25', '26-35', '35+'])
+    print("Age generalized to age groups")
+
+# Add noise to sensitive columns
+def add_noise(col, epsilon=0.1):
+    return col + np.random.normal(0, epsilon, size=len(col))
+
+if 'income' in df.columns:
+    df['income'] = add_noise(df['income'])
+    print("Added noise to income column")
+
+# Prepare features and target
+if 'Scholarship_Awarded' in df.columns:
+    X = df.drop(columns=['Scholarship_Awarded'])
+    y = df['Scholarship_Awarded']
+else:
+    print("Available columns:", df.columns.tolist())
+    target_col = input("Enter the target column name (e.g., 'Scholarship_Awarded'): ")
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
+
+# Encode target variable
+if y.dtype == 'object':
+    le_target = LabelEncoder()
+    y = le_target.fit_transform(y)
+
+print(f"Features shape: {X.shape}")
+print(f"Target distribution: {pd.Series(y).value_counts().to_dict()}")
+
+# ========================================
+# 4. MODEL TRAINING
+# ========================================
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+# Train Random Forest
+print("\\n=== TRAINING RANDOM FOREST MODEL ===")
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Evaluate Random Forest
+rf_pred = rf_model.predict(X_test)
+print("Random Forest Performance:")
+print(f"Accuracy: {accuracy_score(y_test, rf_pred):.3f}")
+print("\\nClassification Report:")
+print(classification_report(y_test, rf_pred))
+
+# Train Neural Network
+print("\\n=== TRAINING NEURAL NETWORK MODEL ===")
+nn_model = MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42)
+nn_model.fit(X_train, y_train)
+
+# Evaluate Neural Network
+nn_pred = nn_model.predict(X_test)
+print("Neural Network Performance:")
+print(f"Accuracy: {accuracy_score(y_test, nn_pred):.3f}")
+print("\\nClassification Report:")
+print(classification_report(y_test, nn_pred))
+
+# Choose best model
+if accuracy_score(y_test, rf_pred) >= accuracy_score(y_test, nn_pred):
+    best_model = rf_model
+    best_pred = rf_pred
+    model_name = "Random Forest"
+    print(f"\\n{model_name} selected as the best model")
+else:
+    best_model = nn_model
+    best_pred = nn_pred
+    model_name = "Neural Network"
+    print(f"\\n{model_name} selected as the best model")
+
+# ========================================
+# 5. FAIRNESS METRICS
+# ========================================
+
+print("\\n=== FAIRNESS EVALUATION ===")
+
+# Look for demographic columns
+demographic_cols = [col for col in X.columns if any(term in col.lower() 
+                   for term in ['gender', 'race', 'ethnicity', 'income', 'region'])]
+
+print(f"Found potential demographic columns: {demographic_cols}")
+
+# Evaluate fairness across demographic groups
+if demographic_cols:
+    demographic_col = demographic_cols[0]
+    
+    print(f"\\nEvaluating fairness across {demographic_col} groups:")
+    
+    for group in X_test[demographic_col].unique():
+        idx = X_test[demographic_col] == group
+        if idx.sum() > 0:
+            group_accuracy = accuracy_score(y_test[idx], best_pred[idx])
+            group_precision = precision_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
+            group_recall = recall_score(y_test[idx], best_pred[idx], average='weighted', zero_division=0)
+            
+            print(f"Group {group}:")
+            print(f"  Accuracy: {group_accuracy:.3f}")
+            print(f"  Precision: {group_precision:.3f}")
+            print(f"  Recall: {group_recall:.3f}")
+            print(f"  Sample size: {idx.sum()}")
+            print()
+
+# ========================================
+# 6. SAFETY MEASUREMENTS
+# ========================================
+
+print("\\n=== SAFETY AND ROBUSTNESS TESTING ===")
+
+# Add noise to test data
+def add_random_noise(X, epsilon=0.05):
+    """Add random noise to numerical features"""
+    X_noisy = X.copy()
+    numerical_features = X.select_dtypes(include=[np.number]).columns
+    
+    for col in numerical_features:
+        noise = np.random.normal(0, epsilon, size=X[col].shape)
+        X_noisy[col] = X[col] + noise
+    
+    return X_noisy
+
+# Test model robustness
+X_test_noisy = add_random_noise(X_test, epsilon=0.05)
+y_pred_noisy = best_model.predict(X_test_noisy)
+
+print("Performance on clean test data:")
+print(f"Accuracy: {accuracy_score(y_test, best_pred):.3f}")
+
+print("\\nPerformance on noisy test data:")
+print(f"Accuracy: {accuracy_score(y_test, y_pred_noisy):.3f}")
+
+print(f"\\nRobustness score (difference): {abs(accuracy_score(y_test, best_pred) - accuracy_score(y_test, y_pred_noisy)):.3f}")
+
+# Test with different noise levels
+print("\\n=== ROBUSTNESS ACROSS NOISE LEVELS ===")
+noise_levels = [0.01, 0.05, 0.1, 0.2]
+robustness_scores = []
+
+for epsilon in noise_levels:
+    X_test_noisy = add_random_noise(X_test, epsilon=epsilon)
+    y_pred_noisy = best_model.predict(X_test_noisy)
+    noisy_accuracy = accuracy_score(y_test, y_pred_noisy)
+    robustness_scores.append(noisy_accuracy)
+    print(f"Noise level {epsilon}: Accuracy = {noisy_accuracy:.3f}")
+
+# Visualize robustness
+plt.figure(figsize=(10, 6))
+original_accuracy = accuracy_score(y_test, best_pred)
+plt.plot([0] + noise_levels, [original_accuracy] + robustness_scores, 'b-o')
+plt.xlabel('Noise Level (Epsilon)')
+plt.ylabel('Accuracy')
+plt.title('Model Robustness Across Noise Levels')
+plt.grid(True)
+plt.show()
+
+# Feature importance analysis
+if hasattr(best_model, 'feature_importances_'):
+    feature_importance = pd.DataFrame({
+        'feature': X.columns,
+        'importance': best_model.feature_importances_
+    }).sort_values('importance', ascending=False)
+    
+    print("\\n=== TOP 10 MOST IMPORTANT FEATURES ===")
+    print(feature_importance.head(10))
+    
+    # Plot feature importance
+    plt.figure(figsize=(12, 8))
+    top_features = feature_importance.head(15)
+    plt.barh(top_features['feature'], top_features['importance'])
+    plt.xlabel('Feature Importance')
+    plt.title('Top 15 Most Important Features')
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+print("✓ Model trained and evaluated")
+print("✓ Fairness metrics computed")
+print("✓ Safety and robustness testing completed")`,
+          },
+          {
+            question: "Law Track",
+            code: `# Complete Patient Data ML Pipeline
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.neural_network import MLPRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score, mean_squared_error
+from sklearn.ensemble import RandomForestClassifier
+import seaborn as sns
+
+# Assuming we have a dataframe 'df' loaded with patient data
+# df = pd.read_csv('your_patient_data.csv')
+
+# ===== EXPLORING THE DATA =====
+print("🔍 Exploring the Data")
+print("=" * 50)
+
+# Inspect missing values and duplicates
+print("Dataset Info:")
+print(df.info())
+print(f"\nMissing values per column:")
+print(df.isnull().sum())
+print(f"\nTotal duplicated rows: {df.duplicated().sum()}")
+
+# Explore the number of categories within categorical variables
+categorical_columns = df.select_dtypes(include=['object']).columns
+print(f"\nCategorical Variables Analysis:")
+for col in categorical_columns:
+    unique_count = df[col].nunique()
+    print(f"{col}: {unique_count} unique categories")
+    if unique_count <= 10:  # Show categories for columns with <= 10 unique values
+        print(f"  Categories: {list(df[col].unique())}")
+    print()
+
+# Create visualizations to understand the data better
+plt.figure(figsize=(15, 10))
+
+# Plot distribution of numerical columns
+numeric_columns = df.select_dtypes(include=[np.number]).columns
+for i, col in enumerate(numeric_columns[:6], 1):  # Limit to first 6 numeric columns
+    plt.subplot(2, 3, i)
+    plt.hist(df[col].dropna(), bins=30, alpha=0.7, edgecolor='black')
+    plt.title(f'Distribution of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap for numeric variables
+if len(numeric_columns) > 1:
+    plt.figure(figsize=(12, 8))
+    correlation_matrix = df[numeric_columns].corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+    plt.title('Correlation Heatmap of Numeric Variables')
+    plt.show()
+
+# ===== CLEANING THE DATA =====
+print("\n🧹 Cleaning the Data")
+print("=" * 50)
+
+# Drop or fill missing values
+df_cleaned = df.copy()
+
+# Fill numeric columns with median, categorical with mode
+for col in df_cleaned.columns:
+    if df_cleaned[col].dtype in ['int64', 'float64']:
+        df_cleaned[col].fillna(df_cleaned[col].median(), inplace=True)
+    else:
+        df_cleaned[col].fillna(df_cleaned[col].mode()[0] if not df_cleaned[col].mode().empty else 'Unknown', inplace=True)
+
+# Remove duplicates
+df_cleaned = df_cleaned.drop_duplicates()
+print(f"Shape after cleaning: {df_cleaned.shape}")
+
+# Normalize or scale numerical columns
+scaler = StandardScaler()
+numeric_cols = df_cleaned.select_dtypes(include=['int64', 'float64']).columns
+df_cleaned[numeric_cols] = scaler.fit_transform(df_cleaned[numeric_cols])
+
+# Encode categorical variables
+categorical_cols = df_cleaned.select_dtypes(include=['object']).columns
+
+# For high cardinality columns, combine rare categories
+for col in categorical_cols:
+    value_counts = df_cleaned[col].value_counts()
+    # Combine categories that appear less than 1% of the time into 'Other'
+    rare_categories = value_counts[value_counts < len(df_cleaned) * 0.01].index
+    if len(rare_categories) > 0:
+        df_cleaned[col] = df_cleaned[col].replace(rare_categories, 'Other')
+        print(f"Combined {len(rare_categories)} rare categories in {col} into 'Other'")
+
+# Use One-Hot Encoding for categorical variables with reasonable number of categories
+for col in categorical_cols:
+    if df_cleaned[col].nunique() <= 10:  # One-hot encode if <= 10 categories
+        dummies = pd.get_dummies(df_cleaned[col], prefix=col, drop_first=True)
+        df_cleaned = pd.concat([df_cleaned, dummies], axis=1)
+        df_cleaned.drop(col, axis=1, inplace=True)
+    else:  # Use label encoding for high cardinality
+        le = LabelEncoder()
+        df_cleaned[col] = le.fit_transform(df_cleaned[col])
+
+print(f"Final shape after encoding: {df_cleaned.shape}")
+
+# ===== PATIENT PRIVACY =====
+print("\n🔒 Patient Privacy Protection")
+print("=" * 50)
+
+# Remove direct identifiers like name (if they exist)
+identifier_columns = ['FirstName', 'LastName', 'MiddleName', 'PatientID', 'SSN']
+existing_identifiers = [col for col in identifier_columns if col in df_cleaned.columns]
+if existing_identifiers:
+    df_cleaned = df_cleaned.drop(columns=existing_identifiers)
+    print(f"Removed identifier columns: {existing_identifiers}")
+
+# Generalize features (e.g., age → age group)
+if 'age' in df_cleaned.columns:
+    df_cleaned['age_group'] = pd.cut(df_cleaned['age'], 
+                                   bins=[0, 18, 35, 60, 100], 
+                                   labels=['0-18', '19-35', '36-60', '60+'])
+    df_cleaned = df_cleaned.drop('age', axis=1)
+    # One-hot encode age groups
+    age_dummies = pd.get_dummies(df_cleaned['age_group'], prefix='age_group', drop_first=True)
+    df_cleaned = pd.concat([df_cleaned, age_dummies], axis=1)
+    df_cleaned = df_cleaned.drop('age_group', axis=1)
+    print("Generalized age into age groups")
+
+# Add noise to sensitive columns (example with income if it exists)
+def add_noise(col, epsilon=0.1):
+    """Add Laplacian noise for differential privacy"""
+    noise = np.random.laplace(0, epsilon, size=len(col))
+    return col + noise
+
+if 'income' in df_cleaned.columns:
+    df_cleaned['income'] = add_noise(df_cleaned['income'], epsilon=0.1)
+    print("Added noise to income column for privacy protection")
+
+# Prepare features and target
+# Assuming 'RawScore' is the target variable (modify as needed)
+target_column = 'RawScore'  # Change this to your actual target column
+if target_column in df_cleaned.columns:
+    X = df_cleaned.drop(columns=[target_column])
+    y = df_cleaned[target_column]
+else:
+    print(f"Warning: Target column '{target_column}' not found. Please specify the correct target column.")
+    # Use the last column as target for demonstration
+    X = df_cleaned.iloc[:, :-1]
+    y = df_cleaned.iloc[:, -1]
+
+print(f"Features shape: {X.shape}, Target shape: {y.shape}")
+
+# ===== TRAINING THE MODEL =====
+print("\n🏋️ Training the Model")
+print("=" * 50)
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Neural Network Model
+mlp_model = MLPRegressor(
+    hidden_layer_sizes=(100, 50, 25),
+    activation='relu',
+    solver='adam',
+    alpha=0.001,
+    batch_size='auto',
+    learning_rate='constant',
+    learning_rate_init=0.001,
+    max_iter=500,
+    random_state=42,
+    early_stopping=True,
+    validation_fraction=0.2
 )
 
-print("Allocation complete!")
-print("Group representation:", group_stats)`,
-          },
-          {
-            question: "Evaluate fairness metrics across groups",
-            code: `def evaluate_allocation_fairness(allocations, total_applicants):
-    """
-    Comprehensive fairness evaluation of allocation system
-    """
-    from sklearn.metrics import roc_auc_score
-    
-    # Calculate demographic parity
-    def demographic_parity(allocations, group_attr):
-        group_allocation_rates = allocations.groupby(group_attr)['allocated'].mean()
-        dp_diff = group_allocation_rates.max() - group_allocation_rates.min()
-        return dp_diff, group_allocation_rates
-    
-    # Calculate equal opportunity
-    def equal_opportunity(allocations, group_attr, merit_attr):
-        # Define high merit as top 50%
-        merit_threshold = allocations[merit_attr].quantile(0.5)
-        high_merit = allocations[allocations[merit_attr] >= merit_threshold]
-        
-        eo_rates = high_merit.groupby(group_attr)['allocated'].mean()
-        eo_diff = eo_rates.max() - eo_rates.min()
-        return eo_diff, eo_rates
-    
-    # Calculate calibration
-    def calibration_fairness(allocations, group_attr, score_attr):
-        calibration_errors = []
-        for group in allocations[group_attr].unique():
-            group_data = allocations[allocations[group_attr] == group]
-            if len(group_data) > 10:  # Minimum sample size
-                predicted = group_data[score_attr]
-                actual = group_data['allocated']
-                try:
-                    auc = roc_auc_score(actual, predicted)
-                    calibration_errors.append(abs(auc - 0.5))  # Distance from random
-                except:
-                    calibration_errors.append(0)
-        
-        return np.mean(calibration_errors) if calibration_errors else 0
-    
-    # Run evaluations
-    dp_diff, dp_rates = demographic_parity(allocations, 'group')
-    eo_diff, eo_rates = equal_opportunity(allocations, 'group', 'score')
-    cal_error = calibration_fairness(allocations, 'group', 'fairness_score')
-    
-    print("=== FAIRNESS EVALUATION RESULTS ===")
-    print(f"Demographic Parity Difference: {dp_diff:.3f}")
-    print(f"Equal Opportunity Difference: {eo_diff:.3f}")
-    print(f"Calibration Error: {cal_error:.3f}")
-    
-    # Fairness assessment
-    fairness_score = 1 - (dp_diff + eo_diff + cal_error) / 3
-    print(f"\\nOverall Fairness Score: {fairness_score:.3f}")
-    
-    if fairness_score > 0.8:
-        print("✅ System is considered fair")
-    elif fairness_score > 0.6:
-        print("⚠️  System has moderate fairness issues")
-    else:
-        print("❌ System has significant fairness problems")
-    
-    return {
-        'demographic_parity': dp_diff,
-        'equal_opportunity': eo_diff,
-        'calibration': cal_error,
-        'overall_fairness': fairness_score
-    }
+print("Training Neural Network...")
+mlp_model.fit(X_train, y_train)
 
-# Evaluate the allocation system
-fairness_results = evaluate_allocation_fairness(allocations_df, total_applicants)`,
-          },
-          {
-            question: "Implement counterfactual fairness",
-            code: `def counterfactual_fairness_analysis(allocations, sensitive_attr, features):
-    """
-    Analyze counterfactual fairness by examining how decisions change
-    when sensitive attributes are modified
-    """
-    import copy
-    
-    def generate_counterfactuals(applicant, sensitive_attr, features):
-        """Generate counterfactual scenarios for an applicant"""
-        counterfactuals = []
-        
-        # Get all possible values for sensitive attribute
-        possible_values = allocations[sensitive_attr].unique()
-        
-        for value in possible_values:
-            if value != applicant[sensitive_attr]:
-                # Create counterfactual applicant
-                cf_applicant = applicant.copy()
-                cf_applicant[sensitive_attr] = value
-                counterfactuals.append(cf_applicant)
-        
-        return counterfactuals
-    
-    def predict_allocation(applicant, model):
-        """Predict allocation decision for an applicant"""
-        # This would use your trained allocation model
-        # For demonstration, we'll use a simple rule-based approach
-        score = applicant['score']
-        need = applicant['need']
-        urgency = applicant['urgency']
-        
-        # Simple allocation rule
-        allocation_score = 0.4 * score + 0.3 * need + 0.3 * urgency
-        return allocation_score > 70  # Threshold for allocation
-    
-    # Analyze counterfactual fairness
-    counterfactual_results = []
-    
-    for idx, applicant in allocations.iterrows():
-        if applicant['allocated']:  # Only analyze allocated applicants
-            counterfactuals = generate_counterfactuals(applicant, sensitive_attr, features)
-            
-            original_decision = True  # They were allocated
-            cf_decisions = []
-            
-            for cf in counterfactuals:
-                cf_decision = predict_allocation(cf, None)  # No model for demo
-                cf_decisions.append(cf_decision)
-            
-            # Check if any counterfactual would have different decision
-            unfair_counterfactuals = [cf for cf in cf_decisions if cf != original_decision]
-            
-            counterfactual_results.append({
-                'applicant_id': idx,
-                'original_group': applicant[sensitive_attr],
-                'counterfactual_groups': [cf[sensitive_attr] for cf in counterfactuals],
-                'cf_decisions': cf_decisions,
-                'unfair_cfs': len(unfair_counterfactuals),
-                'is_counterfactually_fair': len(unfair_counterfactuals) == 0
-            })
-    
-    # Calculate counterfactual fairness metrics
-    total_analyzed = len(counterfactual_results)
-    fair_decisions = sum(1 for result in counterfactual_results if result['is_counterfactually_fair'])
-    cf_fairness_rate = fair_decisions / total_analyzed if total_analyzed > 0 else 0
-    
-    print("=== COUNTERFACTUAL FAIRNESS ANALYSIS ===")
-    print(f"Total applicants analyzed: {total_analyzed}")
-    print(f"Counterfactually fair decisions: {fair_decisions}")
-    print(f"Counterfactual fairness rate: {cf_fairness_rate:.3f}")
-    
-    # Group-wise analysis
-    group_cf_fairness = {}
-    for group in allocations[sensitive_attr].unique():
-        group_results = [r for r in counterfactual_results 
-                        if r['original_group'] == group]
-        if group_results:
-            group_fair = sum(1 for r in group_results if r['is_counterfactually_fair'])
-            group_cf_fairness[group] = group_fair / len(group_results)
-    
-    print("\\nGroup-wise counterfactual fairness:")
-    for group, fairness in group_cf_fairness.items():
-        print(f"  {group}: {fairness:.3f}")
-    
-    return {
-        'overall_cf_fairness': cf_fairness_rate,
-        'group_cf_fairness': group_cf_fairness,
-        'detailed_results': counterfactual_results
-    }
+# Make predictions
+y_pred = mlp_model.predict(X_test)
 
-# Run counterfactual fairness analysis
-cf_results = counterfactual_fairness_analysis(allocations, 'group', ['score', 'need', 'urgency'])`,
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+print(f"Neural Network RMSE: {rmse:.4f}")
+
+# For classification tasks, you might want to use MLPClassifier instead
+# from sklearn.neural_network import MLPClassifier
+
+# ===== FAIRNESS METRICS =====
+print("\n⚖️ Fairness Metrics")
+print("=" * 50)
+
+# Assuming we have a sensitive attribute like 'gender' or 'ethnicity'
+# Split predictions by group and compare accuracy or other metrics
+
+# Example: Evaluate fairness across gender groups (if gender column exists)
+sensitive_attributes = ['gender', 'ethnicity', 'race']  # Add your sensitive attributes
+existing_sensitive = [attr for attr in sensitive_attributes if any(col.startswith(attr) for col in X.columns)]
+
+if existing_sensitive:
+    # For demonstration, let's create a binary classification version
+    y_test_binary = (y_test > y_test.median()).astype(int)
+    y_pred_binary = (y_pred > np.median(y_pred)).astype(int)
+    
+    # Find columns that start with sensitive attribute names
+    for attr in existing_sensitive:
+        attr_columns = [col for col in X_test.columns if col.startswith(attr)]
+        if attr_columns:
+            # Create groups based on the sensitive attribute
+            for col in attr_columns:
+                group_mask = X_test[col] == 1
+                if group_mask.sum() > 10:  # Only analyze if group has sufficient samples
+                    group_accuracy = accuracy_score(y_test_binary[group_mask], y_pred_binary[group_mask])
+                    other_accuracy = accuracy_score(y_test_binary[~group_mask], y_pred_binary[~group_mask])
+                    
+                    print(f"\nFairness Analysis for {col}:")
+                    print(f"  Group with {col}=1 accuracy: {group_accuracy:.4f}")
+                    print(f"  Group with {col}=0 accuracy: {other_accuracy:.4f}")
+                    print(f"  Accuracy difference: {abs(group_accuracy - other_accuracy):.4f}")
+                    
+                    # Classification report for each group
+                    print(f"\n  Classification Report for {col}=1:")
+                    print(classification_report(y_test_binary[group_mask], y_pred_binary[group_mask]))
+
+# ===== SAFETY MEASUREMENTS =====
+print("\n🛡️ Safety Measurements")
+print("=" * 50)
+
+# Test robustness by adding noise to test data
+def add_random_noise(X, epsilon=0.05):
+    """Add random noise to test robustness"""
+    noise = np.random.normal(0, epsilon, size=X.shape)
+    return X + noise
+
+# Add noise to test data and compare performance
+X_test_noisy = add_random_noise(X_test.values, epsilon=0.05)
+y_pred_noisy = mlp_model.predict(X_test_noisy)
+
+# Compare performance
+rmse_original = np.sqrt(mean_squared_error(y_test, y_pred))
+rmse_noisy = np.sqrt(mean_squared_error(y_test, y_pred_noisy))
+
+print(f"Original RMSE: {rmse_original:.4f}")
+print(f"Noisy RMSE: {rmse_noisy:.4f}")
+print(f"Performance degradation: {((rmse_noisy - rmse_original) / rmse_original * 100):.2f}%")
+
+# Additional robustness test: Feature importance perturbation
+try:
+    # Train a Random Forest to get feature importance
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    y_train_binary = (y_train > np.median(y_train)).astype(int)
+    rf_model.fit(X_train, y_train_binary)
+    
+    feature_importance = rf_model.feature_importances_
+    important_features = X_train.columns[np.argsort(feature_importance)[-5:]]  # Top 5 important features
+    
+    print(f"\nTop 5 most important features: {list(important_features)}")
+    
+    # Test robustness by perturbing important features
+    X_test_perturbed = X_test.copy()
+    for feature in important_features:
+        if feature in X_test_perturbed.columns:
+            # Add targeted noise to important features
+            noise_std = X_test_perturbed[feature].std() * 0.1  # 10% of std as noise
+            X_test_perturbed[feature] += np.random.normal(0, noise_std, size=len(X_test_perturbed))
+    
+    y_pred_perturbed = mlp_model.predict(X_test_perturbed)
+    rmse_perturbed = np.sqrt(mean_squared_error(y_test, y_pred_perturbed))
+    
+    print(f"RMSE with perturbed important features: {rmse_perturbed:.4f}")
+    print(f"Performance degradation from feature perturbation: {((rmse_perturbed - rmse_original) / rmse_original * 100):.2f}%")
+
+except Exception as e:
+    print(f"Could not perform feature importance analysis: {e}")
+
+# Adversarial robustness test using gradient-based perturbations (simplified)
+def simple_adversarial_test(model, X_test, y_test, epsilon=0.01):
+    """Simple adversarial robustness test"""
+    X_adv = X_test.copy()
+    
+    # Add small perturbations in the direction that maximizes error
+    for i in range(len(X_test)):
+        original_pred = model.predict([X_test.iloc[i]])[0]
+        best_perturbation = None
+        max_error = 0
+        
+        # Try small perturbations in different directions (simplified approach)
+        for _ in range(10):  # Limited iterations for demonstration
+            perturbation = np.random.normal(0, epsilon, size=X_test.shape[1])
+            X_perturbed = X_test.iloc[i].values + perturbation
+            
+            try:
+                new_pred = model.predict([X_perturbed])[0]
+                error = abs(new_pred - original_pred)
+                
+                if error > max_error:
+                    max_error = error
+                    best_perturbation = perturbation
+            except:
+                continue
+        
+        if best_perturbation is not None:
+            X_adv.iloc[i] = X_test.iloc[i] + best_perturbation
+
+    return X_adv
+
+print("\nTesting adversarial robustness...")
+try:
+    X_test_adv = simple_adversarial_test(mlp_model, X_test, y_test, epsilon=0.01)
+    y_pred_adv = mlp_model.predict(X_test_adv)
+    rmse_adv = np.sqrt(mean_squared_error(y_test, y_pred_adv))
+    
+    print(f"RMSE under adversarial attack: {rmse_adv:.4f}")
+    print(f"Adversarial robustness gap: {((rmse_adv - rmse_original) / rmse_original * 100):.2f}%")
+except Exception as e:
+    print(f"Adversarial robustness test failed: {e}")
+
+print("\n✅ Pipeline Complete!")
+print("=" * 50)
+print(f"Final model performance summary:")
+print(f"- Original RMSE: {rmse_original:.4f}")
+print(f"- Model is trained on {X_train.shape[0]} samples with {X_train.shape[1]} features")
+print(f"- Privacy protection measures applied")
+print(f"- Fairness metrics evaluated")
+print(f"- Robustness tests completed")
+`
           },
         ],
       },
@@ -1080,6 +1508,20 @@ cf_results = counterfactual_fairness_analysis(allocations, 'group', ['score', 'n
                   <span>Apply your learning in a capstone project on real-world issues like hospital or scholarship allocation</span>
                 </li>
               </ul>
+            </div>
+          </div>
+          
+          <div className="bg-purple-100 border rounded-2xl p-6 mt-8">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className=" text-sm font-bold">💡</span>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium  mb-2">A Note About Coding</h4>
+                <p className="font-light leading-relaxed">
+                  There are many different ways to write code to solve the same problem. The code examples provided are just one approach—what matters most is that you understand what you're writing and that it works correctly. Don't worry if your solution looks different from the examples; as long as you can explain your approach and it produces the right results, you're on the right track!
+                </p>
+              </div>
             </div>
           </div>
           </div>
@@ -1214,12 +1656,27 @@ cf_results = counterfactual_fairness_analysis(allocations, 'group', ['score', 'n
 
                   {/* Action Button */}
                   <div className="flex justify-end">
-                    <button
-                      onClick={() => window.open(notebook.colabUrl, "_blank")}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 transition-colors duration-200"
-                    >
-                      Open in Colab <ExternalLink className="h-3 w-3" />
-                    </button>
+                    {notebook.colabUrls ? (
+                      <div className="flex gap-2">
+                        {notebook.colabUrls.map((colabLink, index) => (
+                          <button
+                            key={index}
+                            onClick={() => window.open(colabLink.url, "_blank")}
+                            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors duration-200"
+                          >
+                            {colabLink.title}
+                            <ExternalLink className="h-3 w-3" />
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => window.open(notebook.colabUrl, "_blank")}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 transition-colors duration-200"
+                      >
+                        Open in Colab <ExternalLink className="h-3 w-3" />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
