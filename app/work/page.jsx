@@ -182,9 +182,12 @@ export default function ProjectsPage() {
                         )
                       )}
                       {project.videos && (
-                        <div className="relative h-[300px] w-[450px] rounded-xl overflow-hidden shadow-md bg-black flex items-center justify-center ml-24">
+                        <div className="relative w-full max-w-[450px] h-[220px] sm:h-[260px] md:h-[300px] rounded-xl overflow-hidden shadow-md bg-black flex items-center justify-center mx-auto md:mx-0">
                           {project.videos.map((video, idx) => (
-                            <div key={idx} className="relative h-[310px] w-[450px] rounded-xl overflow-hidden shadow-md bg-black flex items-center justify-center">
+                            <div
+                              key={idx}
+                              className="relative w-full h-full rounded-xl overflow-hidden shadow-md bg-black flex items-center justify-center"
+                            >
                               {video.includes("youtube.com") ? (
                                 <iframe
                                   src={video}
@@ -192,14 +195,14 @@ export default function ProjectsPage() {
                                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                   allowFullScreen
                                   className="w-full h-full"
-                                  style={{ minHeight: 200 }}
+                                  style={{ minHeight: 180 }}
                                 />
                               ) : (
                                 <video
                                   src={video}
                                   controls
                                   className="w-full h-full object-cover"
-                                  style={{ maxHeight: 200 }}
+                                  style={{ maxHeight: 220 }}
                                 />
                               )}
                             </div>

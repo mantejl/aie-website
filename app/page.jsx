@@ -28,14 +28,14 @@ export default function Home() {
             <Link href="/work">View Our Work</Link>
           </Button>
         </div>
-        <div className="flex-1">
-          <div className="relative h-[400px] w-full">
+        <div className="w-full md:flex-1">
+          <div className="relative h-[250px] sm:h-[320px] md:h-[400px] w-full">
             <Image
               src="/connect-team.jpeg"
               alt="AI Ethics Team"
               fill
               className="object-cover rounded-lg"
-              style = {{objectPosition: "center 45%"}}
+              style={{objectPosition: "center 45%"}}
               priority
             />
           </div>
@@ -79,7 +79,7 @@ export default function Home() {
           <h2 className="text-3xl font-light mb-4">Member Career Highlights</h2>
         </div>
         
-        <div className="grid grid-cols-5 gap-8 gap-y-16 items-center justify-items-center max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 gap-y-10 sm:gap-y-16 items-center justify-items-center max-w-4xl mx-auto">
           <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden">
             <Image
               src="/company/Amazon Logo 512.webp"

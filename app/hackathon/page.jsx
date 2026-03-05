@@ -156,7 +156,7 @@ export default function HackathonPage() {
                 }`}
             >
                 {/* Hero */}
-                <section className="bg-purple-700 text-white py-24 px-4">
+                <section className="bg-purple-700 text-white py-24 px-4 mt-8">
                     <div className="max-w-4xl mx-auto text-center">
                         <p className="text-purple-200 font-light text-base mb-3 uppercase tracking-widest">
                             ShiftSC presents

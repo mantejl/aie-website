@@ -153,7 +153,7 @@ export default function TeamPage() {
               </div>
 
               <div className="flex justify-center mb-6">
-                <div className="relative h-[400px] w-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/30 transition-transform duration-700 hover:scale-105">
+                <div className="relative h-[260px] sm:h-[320px] md:h-[380px] lg:h-[420px] w-full max-w-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/30 transition-transform duration-700 hover:scale-105">
                   <Image src="/team/team.png" alt="Team Photo" fill className="object-cover" priority />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
@@ -174,7 +174,7 @@ export default function TeamPage() {
 
           <div className="mb-12">
             <h3 className="text-2xl font-semibold text-center mb-8">Initiative Leads</h3>
-            <div className="flex justify-center gap-12">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
               {currentTeam
                 .filter((member) => member.isLead)
                 .map((member) => (
@@ -185,7 +185,7 @@ export default function TeamPage() {
 
           <div>
             <h3 className="text-2xl font-semibold text-center mb-8">Core Members</h3>
-            <div className="flex justify-center gap-8">
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
               {currentTeam
                 .filter((member) => !member.isLead)
                 .map((member) => (
